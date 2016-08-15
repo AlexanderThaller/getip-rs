@@ -29,7 +29,7 @@ fn main() {
     // Link logger_after as your *last* after middleware.
     chain.link_after(logger_after);
 
-    let binding = "127.0.0.1:8080";
+    let binding = "0.0.0.0:8080";
     Iron::new(chain).http(binding).unwrap();
 }
 
