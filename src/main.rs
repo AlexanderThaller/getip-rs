@@ -1,23 +1,25 @@
 extern crate iron;
 #[macro_use]
 extern crate hyper;
-#[macro_use]
 extern crate logger;
 
+use iron::method;
 use iron::prelude::*;
 use iron::status;
-use std::net::IpAddr;
-use iron::method;
-use std::str::FromStr;
-use logger::Logger;
 use logger::format::Format;
+use logger::Logger;
+use std::net::IpAddr;
+use std::str::FromStr;
 
 header! { (XForwardedFor, "X-Forwarded-For") => [String] }
 
 fn main() {
-    let format = Format::new("@[bold]{method}@ {uri} @[bold]->@ @[C]{ip-addr}@ -- @[C]{status}@ ({response-time})",
-                             vec![],
-                             vec![]);
+    let format = Format::new(
+        "@[bold]{method}@ {uri} @[bold]->@ @[C]{ip-addr}@ -- @[C]{status}@ \
+         ({response-time})",
+        vec![],
+        vec![],
+    );
 
     let (logger_before, logger_after) = Logger::new(Some(format.unwrap()));
 
