@@ -39,7 +39,7 @@ impl<'a, 'r> FromRequest<'a, 'r> for RemoteAddr {
             })
         } else {
             Outcome::Success(RemoteAddr {
-                addr: format!("{}", req.remote().unwrap()),
+                addr: format!("{}", req.remote().unwrap().ip()),
             })
         }
     }
