@@ -7,7 +7,7 @@ use rocket::request::{self, FromRequest};
 use rocket::{Outcome, Request};
 
 #[get("/")]
-fn index<'a>(req: RemoteAddr) -> String {
+fn index(req: RemoteAddr) -> String {
     req.addr()
 }
 
@@ -34,13 +34,16 @@ impl<'a, 'r> FromRequest<'a, 'r> for RemoteAddr {
 
     fn from_request(req: &'a Request<'r>) -> request::Outcome<Self, ()> {
         if req.headers().contains("X-Forwarded-For") {
-            Outcome::Success(RemoteAddr {
-                addr: format!("{}", req.headers().get_one("X-Forwarded-For").unwrap()),
-            })
-        } else {
-            Outcome::Success(RemoteAddr {
-                addr: format!("{}", req.remote().unwrap().ip()),
-            })
+            let header = req.headers().get_one("X-Forwarded-For").unwrap();
+            let addr = header.split(',').next().unwrap();
+
+            return Outcome::Success(RemoteAddr {
+                addr: addr.to_string(),
+            });
         }
+
+        Outcome::Success(RemoteAddr {
+            addr: req.remote().unwrap().ip().to_string(),
+        })
     }
 }
